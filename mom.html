@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Днём Матери! 💐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+            touch-action: pan-y;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 15px auto;
+            padding: 20px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .memory {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .memory h2 {
+            color: #e91e63;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .memory p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        /* Стили для свайп-галереи */
+        .gallery {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            margin: 20px auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: #f8f8f8;
+        }
+
+        .gallery-track {
+            display: flex;
+            width: 500%;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-slide {
+            width: 20%;
+            height: 100%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #ffafbd, #ffc3a0);
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Убрал плейсхолдер */
+        .placeholder {
+            display: none !important;
+        }
+
+        .gallery-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.7);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: none;
+        }
+
+        .gallery:hover .gallery-nav {
+            display: block;
+        }
+
+        .gallery-prev {
+            left: 10px;
+        }
+
+        .gallery-next {
+            right: 10px;
+        }
+
+        .gallery-hint {
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: #e91e63;
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin: 0 3px;
+        }
+
+        .buttons-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .debug-info {
+            font-size: 0.8em;
+            color: #999;
+            text-align: center;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .btn {
+                font-size: 1.1em;
+                padding: 15px;
+            }
+
+            .memory {
+                padding: 20px;
+            }
+
+            .gallery {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💖 С Днём Матери! 💖</h1>
+        <p class="subtitle">Любимой мамочке 🥰</p>
+
+        <!-- Главная кнопка -->
+        <button class="btn" id="giftBtn">
+            🎁 Открыть подарок
+        </button>
+
+        <!-- Контейнер для остальных кнопок (появится после подарка) -->
+        <div class="buttons-container" id="buttonsContainer">
+            <!-- Кнопки воспоминаний -->
+            <button class="btn memory-btn" id="memory1Btn">
+                📸 Воспоминания из Memory1
+            </button>
+
+            <button class="btn memory-btn" id="memory2Btn">
+                🌟 Воспоминания из Memory2
+            </button>
+
+            <!-- Кнопка мечты -->
+            <button class="btn" id="dreamBtn">
+                💫 Моя мечта для тебя
+            </button>
+        </div>
+
+        <!-- Блоки с содержимым -->
+        <div class="memory" id="giftContent">
+            <h2>🎉 Самый лучший подарок! 🎉</h2>
+            <p>Знаешь, мам, мой самый главный подарок для тебя — это...</p>
+            <p style="text-align: center; font-size: 1.5em; margin: 20px 0;">✨ Я! ✨</p>
+            <p>Потому что я — твоё самое большое счастье и гордость! 😊</p>
+            <p>А теперь смотри, что ещё я подготовил(а) для тебя! 👇</p>
+        </div>
+
+        <div class="memory" id="memory1Content">
+            <h2>🌸 Наши прекрасные моменты 🌸</h2>
+            <p>Этот альбом собрал самые тёплые и радостные мгновения нашей жизни! 💕</p>
+            <p>Каждая фотография — это история нашей любви и счастья! ✨</p>
+
+            <!-- Свайп-галерея для первого воспоминания -->
+            <div class="gallery" id="gallery1">
+                <div class="gallery-track">
+                    <div class="gallery-slide">
+                        <!-- Фото из папки Memory1 -->
+                        <img src="Memory1/Memory1_1.jpg" alt="Наше воспоминание 1"
+                             onerror="showError(this, 'Memory1_1.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory1/Memory1_2.jpg" alt="Наше воспоминание 2"
+                             onerror="showError(this, 'Memory1_2.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory1/Memory1_3.jpg" alt="Наше воспоминание 3"
+                             onerror="showError(this, 'Memory1_3.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory1/Memory1_4.jpg" alt="Наше воспоминание 4"
+                             onerror="showError(this, 'Memory1_4.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory1/Memory1_5.jpg" alt="Наше воспоминание 5"
+                             onerror="showError(this, 'Memory1_5.jpg')">
+                    </div>
+                </div>
+                <div class="gallery-counter">1/5</div>
+                <button class="gallery-nav gallery-prev">❮</button>
+                <button class="gallery-nav gallery-next">❯</button>
+            </div>
+            <div class="gallery-hint">💡 Листай фото пальцем влево/вправо</div>
+            <div class="error-message" id="error1"></div>
+            <div class="debug-info" id="debug1">
+                Ожидаемые пути: Memory1/Memory1_1.jpg, Memory1/Memory1_2.jpg, ...
+            </div>
+        </div>
+
+        <div class="memory" id="memory2Content">
+            <h2>🌅 Наши незабываемые приключения 🌅</h2>
+            <p>Путешествия, прогулки, открытия — всё это с тобой становится волшебным! 🌟</p>
+            <p>Спасибо за каждое мгновение, проведённое вместе! 🤗</p>
+
+            <!-- Свайп-галерея для второго воспоминания -->
+            <div class="gallery" id="gallery2">
+                <div class="gallery-track">
+                    <div class="gallery-slide">
+                        <!-- Фото из папки Memory2 -->
+                        <img src="Memory2/Memory2_1.jpg" alt="Наше приключение 1"
+                             onerror="showError(this, 'Memory2_1.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory2/Memory2_2.jpg" alt="Наше приключение 2"
+                             onerror="showError(this, 'Memory2_2.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory2/Memory2_3.jpg" alt="Наше приключение 3"
+                             onerror="showError(this, 'Memory2_3.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory2/Memory2_4.jpg" alt="Наше приключение 4"
+                             onerror="showError(this, 'Memory2_4.jpg')">
+                    </div>
+                    <div class="gallery-slide">
+                        <img src="Memory2/Memory2_5.jpg" alt="Наше приключение 5"
+                             onerror="showError(this, 'Memory2_5.jpg')">
+                    </div>
+                </div>
+                <div class="gallery-counter">1/5</div>
+                <button class="gallery-nav gallery-prev">❮</button>
+                <button class="gallery-nav gallery-next">❯</button>
+            </div>
+            <div class="gallery-hint">💡 Листай фото пальцем влево/вправо</div>
+            <div class="error-message" id="error2"></div>
+            <div class="debug-info" id="debug2">
+                Ожидаемые пути: Memory2/Memory2_1.jpg, Memory2/Memory2_2.jpg, ...
+            </div>
+        </div>
+
+        <div class="memory" id="dreamContent">
+            <h2>💝 Моя мечта для тебя 💝</h2>
+            <p>Мамочка, я мечтаю, чтобы ты всегда была счастлива! 😊</p>
+            <p>Чтобы у тебя было больше времени на себя и свои увлечения! 🎨</p>
+            <p>Чтобы ты знала, как сильно я тебя люблю и ценю! 💖</p>
+            <p>Ты — самый важный человек в моей жизни! 🌈</p>
+
+            <p style="text-align: center; font-size: 1.3em; margin-top: 20px;">
+                С Днём Матери! 🥳🎉🎊
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Функция для показа ошибок загрузки изображений
+        function showError(imgElement, filename) {
+            console.log('Ошибка загрузки:', filename);
+            imgElement.style.display = 'none';
+
+            // Меняем фон на градиент при ошибке загрузки
+            const slide = imgElement.parentElement;
+            slide.style.background = 'linear-gradient(45deg, #ffafbd, #ffc3a0)';
+            slide.innerHTML = '<div style="color: white; font-size: 1.2em;">📷 Фото не найдено</div>';
+
+            // Показываем сообщение об ошибке
+            const galleryId = imgElement.closest('.gallery').id;
+            const errorId = galleryId === 'gallery1' ? 'error1' : 'error2';
+            const errorElement = document.getElementById(errorId);
+
+            errorElement.innerHTML = `⚠️ Фото ${filename} не найдено. Проверьте путь к файлу.`;
+            errorElement.style.display = 'block';
+
+            // Показываем отладочную информацию
+            const debugId = galleryId === 'gallery1' ? 'debug1' : 'debug2';
+            document.getElementById(debugId).style.display = 'block';
+        }
+
+        // Класс для управления галереей
+        class Gallery {
+            constructor(containerId, totalSlides = 5) {
+                this.container = document.getElementById(containerId);
+                this.track = this.container.querySelector('.gallery-track');
+                this.counter = this.container.querySelector('.gallery-counter');
+                this.prevBtn = this.container.querySelector('.gallery-prev');
+                this.nextBtn = this.container.querySelector('.gallery-next');
+                this.currentSlide = 0;
+                this.totalSlides = totalSlides;
+
+                this.init();
+            }
+
+            init() {
+                // Обработчики для кнопок
+                this.prevBtn.addEventListener('click', () => this.prev());
+                this.nextBtn.addEventListener('click', () => this.next());
+
+                // Обработчики для свайпа
+                this.setupSwipe();
+
+                this.updateCounter();
+
+                // Проверяем загрузку изображений
+                this.checkImages();
+            }
+
+            checkImages() {
+                const images = this.container.querySelectorAll('img');
+                let loadedCount = 0;
+
+                images.forEach((img, index) => {
+                    if (img.complete && img.naturalHeight !== 0) {
+                        loadedCount++;
+                        // Убираем градиентный фон если фото загрузилось
+                        img.parentElement.style.background = 'transparent';
+                    } else {
+                        img.addEventListener('load', () => {
+                            loadedCount++;
+                            console.log(`Изображение ${index + 1} загружено`);
+                            // Убираем градиентный фон когда фото загрузилось
+                            img.parentElement.style.background = 'transparent';
+                        });
+                    }
+                });
+
+                console.log(`Галерея ${this.container.id}: ${loadedCount}/${images.length} изображений загружено`);
+            }
+
+            setupSwipe() {
+                let startX = 0;
+                let endX = 0;
+
+                this.container.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+
+                this.container.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    this.handleSwipe(startX, endX);
+                });
+
+                // Для мыши
+                this.container.addEventListener('mousedown', (e) => {
+                    startX = e.clientX;
+                    document.addEventListener('mouseup', onMouseUp);
+                });
+
+                const onMouseUp = (e) => {
+                    endX = e.clientX;
+                    this.handleSwipe(startX, endX);
+                    document.removeEventListener('mouseup', onMouseUp);
+                };
+            }
+
+            handleSwipe(startX, endX) {
+                const diff = startX - endX;
+                const minSwipe = 50;
+
+                if (Math.abs(diff) > minSwipe) {
+                    if (diff > 0) {
+                        this.next();
+                    } else {
+                        this.prev();
+                    }
+                }
+            }
+
+            next() {
+                this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+                this.updateGallery();
+            }
+
+            prev() {
+                this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+                this.updateGallery();
+            }
+
+            updateGallery() {
+                const translateX = -this.currentSlide * (100 / this.totalSlides);
+                this.track.style.transform = `translateX(${translateX}%)`;
+                this.updateCounter();
+            }
+
+            updateCounter() {
+                this.counter.textContent = `${this.currentSlide + 1}/${this.totalSlides}`;
+            }
+        }
+
+        // Основная логика страницы
+        const giftBtn = document.getElementById('giftBtn');
+        const buttonsContainer = document.getElementById('buttonsContainer');
+        const memory1Btn = document.getElementById('memory1Btn');
+        const memory2Btn = document.getElementById('memory2Btn');
+        const dreamBtn = document.getElementById('dreamBtn');
+
+        const giftContent = document.getElementById('giftContent');
+        const memory1Content = document.getElementById('memory1Content');
+        const memory2Content = document.getElementById('memory2Content');
+        const dreamContent = document.getElementById('dreamContent');
+
+        let gallery1, gallery2;
+
+        function hideAllContent() {
+            giftContent.style.display = 'none';
+            memory1Content.style.display = 'none';
+            memory2Content.style.display = 'none';
+            dreamContent.style.display = 'none';
+        }
+
+        giftBtn.addEventListener('click', function() {
+            hideAllContent();
+            giftContent.style.display = 'block';
+            buttonsContainer.style.display = 'block';
+            giftBtn.style.display = 'none';
+            giftContent.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        memory1Btn.addEventListener('click', function() {
+            hideAllContent();
+            memory1Content.style.display = 'block';
+            if (!gallery1) {
+                gallery1 = new Gallery('gallery1', 5);
+            }
+            memory1Content.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        memory2Btn.addEventListener('click', function() {
+            hideAllContent();
+            memory2Content.style.display = 'block';
+            if (!gallery2) {
+                gallery2 = new Gallery('gallery2', 5);
+            }
+            memory2Content.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        dreamBtn.addEventListener('click', function() {
+            hideAllContent();
+            dreamContent.style.display = 'block';
+            dreamContent.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        window.addEventListener('load', function() {
+            giftBtn.style.display = 'block';
+            buttonsContainer.style.display = 'none';
+            hideAllContent();
+
+            // Показываем отладочную информацию при загрузке
+            console.log('Проверка структуры папок:');
+            console.log('- Должна быть папка Memory1 с файлами Memory1_1.jpg ... Memory1_5.jpg');
+            console.log('- Должна быть папка Memory2 с файлами Memory2_1.jpg ... Memory2_5.jpg');
+        });
+    </script>
+</body>
+</html>
